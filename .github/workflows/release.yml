@@ -33,7 +33,7 @@ jobs:
         with:
           node-version: 20
           registry-url: 'https://npm.pkg.github.com'
-          scope: '@zirro'
+          scope: '@zirro-hq'
       - name: Cache node modules
         id: cache-npm
         uses: actions/cache@v4
@@ -74,12 +74,14 @@ jobs:
         with:
           node-version: 20
           registry-url: 'https://npm.pkg.github.com'
-          scope: '@zirro'
+          scope: '@zirro-hq'
       - name: Setup .npmrc
         run: |
-          echo "@zirro:registry=https://npm.pkg.github.com/" > .npmrc
+          echo "@zirro-hq:registry=https://npm.pkg.github.com/" > .npmrc
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
           echo "always-auth=true" >> .npmrc
+          echo "Debug: .npmrc contents:"
+          cat .npmrc
       - name: Install dependencies
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -88,6 +90,24 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm run preparePub
+      - name: Debug build artifacts
+        run: |
+          echo "Checking if dist folder exists:"
+          ls -la
+          if [ -d "dist" ]; then
+            echo "dist folder contents:"
+            ls -la dist/
+          else
+            echo "ERROR: dist folder not found!"
+          fi
+      - name: Test npm authentication
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          echo "Testing npm whoami:"
+          npm whoami --registry=https://npm.pkg.github.com/ || echo "npm whoami failed"
+          echo "Testing npm access:"
+          npm access list packages --registry=https://npm.pkg.github.com/ || echo "npm access failed"
       - name: Release
         env:
           # GitHub token for semantic-release operations

@@ -16,6 +16,7 @@ const toggleVariants = cva(
         sm: 'h-5 w-9',
         md: 'h-6 w-11',
         lg: 'h-7 w-12',
+        xl: 'h-8 w-13',
       },
       variant: {
         default: '',
