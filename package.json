@@ -51,8 +51,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/zirro/zirro.git",
-    "directory": "web-components"
+      "url": "https://github.com/Zirro-HQ/zirro-web-components.git"
   },
   "publishConfig": {
     "access": "public"
