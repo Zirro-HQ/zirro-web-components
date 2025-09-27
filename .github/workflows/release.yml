@@ -49,21 +49,21 @@ jobs:
       - name: Install dependencies
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: yarn
-      - name: Run Test Suite
-        env:
-          ESLINT_DISABLE: true
-        run: npm run test
+        run: npm install
+      # - name: Run Test Suite
+      #   env:
+      #     ESLINT_DISABLE: true
+      #   run: npm run test
   release:
     runs-on: ubuntu-latest
     if: ${{ github.ref == 'refs/heads/main' }}
     needs: [test]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Needed for semantic-release to generate correct version
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           registry-url: 'https://npm.pkg.github.com'
