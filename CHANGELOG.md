@@ -1,3 +1,8 @@
+## <small>1.0.2 (2025-09-27)</small>
+
+* fix: release ([770e4cb](https://github.com/Zirro-HQ/zirro-web-components/commit/770e4cb))
+* fix: release ([7510ffa](https://github.com/Zirro-HQ/zirro-web-components/commit/7510ffa))
+
 ## <small>1.0.1 (2025-09-27)</small>
 
 * fix: remove unused variables ([d03a194](https://github.com/Zirro-HQ/zirro-web-components/commit/d03a194))

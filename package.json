@@ -1,6 +1,6 @@
 {
   "name": "@zirro/web-components",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Zirro component library built with React, TypeScript, and Tailwind CSS",
   "type": "module",
   "main": "./dist/index.js",
