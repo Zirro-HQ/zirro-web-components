@@ -53,6 +53,7 @@
     "url": "https://github.com/Zirro-HQ/zirro-web-components.git"
   },
   "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
     "access": "public"
   },
   "peerDependencies": {

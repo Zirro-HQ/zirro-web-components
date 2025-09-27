@@ -39,7 +39,13 @@
       }
     ],
     "@semantic-release/changelog",
-    "@semantic-release/npm",
+    [
+      "@semantic-release/npm",
+      {
+        "npmPublish": true,
+        "tarballDir": "dist"
+      }
+    ],
     [
       "@semantic-release/git",
       {
