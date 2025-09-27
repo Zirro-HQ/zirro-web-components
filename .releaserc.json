@@ -31,19 +31,10 @@
       "@semantic-release/release-notes-generator",
       {
         "preset": "conventionalcommits",
-        "presetConfig": {
-          "types": [
-            { "type": "feat", "section": "🚀 Features" },
-            { "type": "fix", "section": "🐛 Bug Fixes" },
-            { "type": "perf", "section": "⚡ Performance" },
-            { "type": "revert", "section": "🔄 Reverts" },
-            { "type": "docs", "section": "📖 Documentation" },
-            { "type": "style", "section": "💄 Styles" },
-            { "type": "refactor", "section": "♻️ Refactoring" },
-            { "type": "test", "section": "🧪 Tests" },
-            { "type": "build", "section": "🏗️ Build" },
-            { "type": "ci", "section": "👷 CI/CD" }
-          ]
+        "writerOpts": {
+          "transform": {
+            "committerDate": "YYYY-MM-DD"
+          }
         }
       }
     ],
