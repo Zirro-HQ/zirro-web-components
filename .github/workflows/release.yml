@@ -6,6 +6,12 @@ on:
       - .gitignore
       - README.md
 
+# Permissions for GITHUB_TOKEN
+permissions:
+  contents: write # To push tags and releases
+  issues: write # To create issues on failure
+  pull-requests: write # To comment on PRs
+
 # Global environment variables
 env:
   # Use GitHub's automatic token for GitHub operations
@@ -62,6 +68,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Needed for semantic-release to generate correct version
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -79,7 +86,7 @@ jobs:
       - name: Release
         env:
           # GitHub token for semantic-release operations
-          GITHUB_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Token for publishing to npm registry
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx semantic-release
