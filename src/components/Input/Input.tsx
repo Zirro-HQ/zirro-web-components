@@ -275,7 +275,6 @@ export const Input = forwardRef<
     // Determine if input is invalid
     const isInvalid = ariaInvalid || !!error || variant === 'error';
     const effectiveVariant = error ? 'error' : variant;
-    const displayText = error || helperText;
 
     const inputClasses = cn(
       inputVariants({
