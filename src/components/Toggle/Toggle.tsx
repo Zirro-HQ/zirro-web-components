@@ -16,6 +16,7 @@ const toggleVariants = cva(
         sm: 'h-5 w-9',
         md: 'h-6 w-11',
         lg: 'h-7 w-12',
+        xl: 'h-8 w-13',
       },
       variant: {
         default: '',
@@ -65,6 +66,11 @@ const toggleVariants = cva(
         size: 'lg',
         class: 'h-7 w-12',
       },
+      {
+        variant: 'text',
+        size: 'xl',
+        class: 'h-8 w-13',
+      },
     ],
     defaultVariants: {
       size: 'md',
@@ -82,6 +88,7 @@ const toggleThumbVariants = cva(
         sm: 'h-4 w-4',
         md: 'h-5 w-5',
         lg: 'h-6 w-6',
+        xl: 'h-7 w-7',
       },
       variant: {
         default: '',
@@ -127,6 +134,18 @@ const toggleThumbVariants = cva(
       {
         variant: 'default',
         size: 'lg',
+        checked: false,
+        class: 'translate-x-0',
+      },
+      {
+        variant: 'default',
+        size: 'xl',
+        checked: true,
+        class: 'translate-x-5',
+      },
+      {
+        variant: 'default',
+        size: 'xl',
         checked: false,
         class: 'translate-x-0',
       },
@@ -203,6 +222,11 @@ const toggleThumbVariants = cva(
       {
         variant: 'text',
         size: 'lg',
+        class: 'w-[15px] h-[15px]',
+      },
+      {
+        variant: 'text',
+        size: 'xl',
         class: 'w-[15px] h-[15px]',
       },
     ],
