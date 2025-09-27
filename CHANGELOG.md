@@ -1,3 +1,10 @@
+## <small>1.0.1 (2025-09-27)</small>
+
+* fix: remove unused variables ([d03a194](https://github.com/Zirro-HQ/zirro-web-components/commit/d03a194))
+* fix: remove unused variables ([3cdb67e](https://github.com/Zirro-HQ/zirro-web-components/commit/3cdb67e))
+* Merge pull request #2 from Zirro-HQ/tega/fix/toggle ([646a810](https://github.com/Zirro-HQ/zirro-web-components/commit/646a810)), closes [#2](https://github.com/Zirro-HQ/zirro-web-components/issues/2)
+* perf: make component accessible ([d5b9bc0](https://github.com/Zirro-HQ/zirro-web-components/commit/d5b9bc0))
+
 ## 1.0.0 (2025-09-27)
 
 * feat: Base components ([8a0f5e3](https://github.com/Zirro-HQ/zirro-web-components/commit/8a0f5e3))
