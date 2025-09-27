@@ -1,3 +1,18 @@
+## 1.0.0 (2025-09-27)
+
+* feat: Base components ([8a0f5e3](https://github.com/Zirro-HQ/zirro-web-components/commit/8a0f5e3))
+* feat: Base components ([de0f0cf](https://github.com/Zirro-HQ/zirro-web-components/commit/de0f0cf))
+* feat: Base components ([4119d8b](https://github.com/Zirro-HQ/zirro-web-components/commit/4119d8b))
+* feat: Base components ([d6650a7](https://github.com/Zirro-HQ/zirro-web-components/commit/d6650a7))
+* feat: Base components ([480594f](https://github.com/Zirro-HQ/zirro-web-components/commit/480594f))
+* feat: Base components ([7a2c7b7](https://github.com/Zirro-HQ/zirro-web-components/commit/7a2c7b7))
+* feat: Base components ([cd15910](https://github.com/Zirro-HQ/zirro-web-components/commit/cd15910))
+* feat: Base components ([a76d6c5](https://github.com/Zirro-HQ/zirro-web-components/commit/a76d6c5))
+* feat: Base components ([ddfdd32](https://github.com/Zirro-HQ/zirro-web-components/commit/ddfdd32))
+* feat: Base components ([71c4e83](https://github.com/Zirro-HQ/zirro-web-components/commit/71c4e83))
+* feat: Base components ([9a57348](https://github.com/Zirro-HQ/zirro-web-components/commit/9a57348))
+* feat: Base components ([dd4864c](https://github.com/Zirro-HQ/zirro-web-components/commit/dd4864c))
+
 # Changelog
 
 All notable changes to this project will be documented in this file.

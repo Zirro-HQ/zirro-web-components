@@ -1,6 +1,6 @@
 {
   "name": "@zirro/web-components",
-  "version": "0.0.0-semantic-release",
+  "version": "1.0.0",
   "description": "Zirro component library built with React, TypeScript, and Tailwind CSS",
   "type": "module",
   "main": "./dist/index.js",
@@ -36,7 +36,6 @@
     "storybook:build": "npm run build-storybook",
     "storybook:preview": "npx --yes serve storybook-static -p 6007",
     "preparePub": "npm run build"
-
   },
   "keywords": [
     "react",
@@ -51,7 +50,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-      "url": "https://github.com/Zirro-HQ/zirro-web-components.git"
+    "url": "https://github.com/Zirro-HQ/zirro-web-components.git"
   },
   "publishConfig": {
     "access": "public"
