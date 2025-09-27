@@ -83,6 +83,14 @@ type BaseInputProps = {
   onFilesChange?: (files: File[]) => void;
   /** Callback when a file is deleted */
   onFileDelete?: (index: number) => void;
+  /** Whether the input is required */
+  required?: boolean;
+  /** Accessible description for screen readers */
+  'aria-describedby'?: string;
+  /** Accessible label when label prop is not sufficient */
+  'aria-label'?: string;
+  /** Whether the input is invalid */
+  'aria-invalid'?: boolean;
 } & BaseProps &
   VariantProps<typeof inputVariants>;
 
@@ -242,12 +250,30 @@ export const Input = forwardRef<
       maxFiles = 10,
       onFilesChange,
       onFileDelete,
+      required = false,
+      'aria-describedby': ariaDescribedby,
+      'aria-label': ariaLabel,
+      'aria-invalid': ariaInvalid,
+      id,
       ...props
     },
     ref
   ) => {
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    // Generate unique IDs for accessibility
+    const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
+    const helperTextId = helperText ? `${inputId}-helper` : undefined;
+    const errorId = error ? `${inputId}-error` : undefined;
+
+    // Combine aria-describedby with helper text and error IDs
+    const describedBy =
+      [ariaDescribedby, helperTextId, errorId].filter(Boolean).join(' ') ||
+      undefined;
+
+    // Determine if input is invalid
+    const isInvalid = ariaInvalid || !!error || variant === 'error';
     const effectiveVariant = error ? 'error' : variant;
     const displayText = error || helperText;
 
@@ -318,6 +344,15 @@ export const Input = forwardRef<
             <div
               className={cn(inputClasses, 'cursor-pointer')}
               onClick={triggerFileInput}
+              role='button'
+              tabIndex={0}
+              onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  triggerFileInput();
+                }
+              }}
+              aria-label={ariaLabel || `${uploadText}. ${uploadSubtext}`}
             >
               <input
                 type='file'
@@ -326,6 +361,11 @@ export const Input = forwardRef<
                 className='sr-only'
                 onChange={handleFileChange}
                 ref={fileInputRef}
+                id={inputId}
+                required={required}
+                aria-describedby={describedBy}
+                aria-label={ariaLabel || `${uploadText}. ${uploadSubtext}`}
+                aria-invalid={isInvalid}
                 {...(props as InputHTMLAttributes<HTMLInputElement>)}
               />
               <UploadIcon className='text-gray-400 m-auto mb-4' />
@@ -362,14 +402,16 @@ export const Input = forwardRef<
                 <button
                   type='button'
                   onClick={handleReplaceFile}
-                  className='text-gray-900 font-jost hover:text-gray-700 transition-colors'
+                  className='text-gray-900 font-jost hover:text-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded'
+                  aria-label={`Replace ${uploadedFiles[0]?.name || 'uploaded file'}`}
                 >
                   Replace
                 </button>
                 <button
                   type='button'
                   onClick={() => handleFileDelete(0)}
-                  className='text-red-500 font-jost hover:text-red-700 transition-colors'
+                  className='text-red-500 font-jost hover:text-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 rounded'
+                  aria-label={`Delete ${uploadedFiles[0]?.name || 'uploaded file'}`}
                 >
                   Delete
                 </button>
@@ -382,8 +424,17 @@ export const Input = forwardRef<
                 {/* Upload more button - only show if under maxFiles limit */}
                 {uploadedFiles.length < maxFiles && (
                   <div
-                    className='w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center bg-[#F1F1F1] hover:bg-[#E8E8E8] transition-colors cursor-pointer'
+                    className='w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center bg-[#F1F1F1] hover:bg-[#E8E8E8] transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
                     onClick={triggerFileInput}
+                    role='button'
+                    tabIndex={0}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        triggerFileInput();
+                      }
+                    }}
+                    aria-label={`Upload more files. ${uploadedFiles.length} of ${maxFiles} files uploaded.`}
                   >
                     <input
                       type='file'
@@ -413,7 +464,8 @@ export const Input = forwardRef<
                     <button
                       type='button'
                       onClick={() => handleFileDelete(index)}
-                      className='absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600'
+                      className='absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:opacity-100'
+                      aria-label={`Delete ${file.name}`}
                     >
                       <DeleteIcon />
                     </button>
@@ -443,6 +495,11 @@ export const Input = forwardRef<
           className={inputClasses}
           ref={ref as React.Ref<HTMLTextAreaElement>}
           rows={rows}
+          id={inputId}
+          required={required}
+          aria-describedby={describedBy}
+          aria-label={ariaLabel}
+          aria-invalid={isInvalid}
           {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
         />
       );
@@ -452,6 +509,11 @@ export const Input = forwardRef<
         <input
           className={inputClasses}
           ref={ref as React.Ref<HTMLInputElement>}
+          id={inputId}
+          required={required}
+          aria-describedby={describedBy}
+          aria-label={ariaLabel}
+          aria-invalid={isInvalid}
           {...(props as InputHTMLAttributes<HTMLInputElement>)}
         />
       );
@@ -459,18 +521,34 @@ export const Input = forwardRef<
 
     return (
       <div className='w-full'>
-        {label && <label className={labelVariants({ size })}>{label}</label>}
+        {label && (
+          <label
+            htmlFor={inputId}
+            className={cn(
+              labelVariants({ size }),
+              required && "after:content-['*'] after:ml-1 after:text-red-500"
+            )}
+          >
+            {label}
+          </label>
+        )}
 
         {inputElement}
 
-        {displayText && (
+        {helperText && !error && (
+          <p id={helperTextId} className='mt-2 text-sm text-gray-600'>
+            {helperText}
+          </p>
+        )}
+
+        {error && (
           <p
-            className={cn(
-              'mt-2 text-sm',
-              error ? 'text-red-600' : 'text-gray-600'
-            )}
+            id={errorId}
+            className='mt-2 text-sm text-red-600'
+            role='alert'
+            aria-live='polite'
           >
-            {displayText}
+            {error}
           </p>
         )}
       </div>

@@ -59,6 +59,16 @@ export interface ButtonProps
   Icon?: React.ComponentType<{ className?: string }>;
   /** Position of the icon relative to text */
   iconPosition?: 'left' | 'right';
+  /** Accessible description for screen readers */
+  'aria-describedby'?: string;
+  /** Accessible label when button text is not descriptive enough */
+  'aria-label'?: string;
+  /** Whether the button controls an expanded element */
+  'aria-expanded'?: boolean;
+  /** ID of the element controlled by this button */
+  'aria-controls'?: string;
+  /** Whether the button represents a pressed state (for toggle buttons) */
+  'aria-pressed'?: boolean;
 }
 
 /**
@@ -179,6 +189,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       iconPosition = 'left',
       children,
       disabled,
+      'aria-describedby': ariaDescribedby,
+      'aria-label': ariaLabel,
+      'aria-expanded': ariaExpanded,
+      'aria-controls': ariaControls,
+      'aria-pressed': ariaPressed,
       ...props
     },
     ref
@@ -224,9 +239,18 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         )}
         ref={ref}
         disabled={isDisabled}
+        aria-disabled={isDisabled}
+        aria-describedby={ariaDescribedby}
+        aria-label={ariaLabel}
+        aria-expanded={ariaExpanded}
+        aria-controls={ariaControls}
+        aria-pressed={ariaPressed}
+        aria-busy={isLoading}
         {...props}
       >
         {renderContent()}
+        {/* Screen reader only text for loading state */}
+        {isLoading && <span className='sr-only'>{loadingText}</span>}
       </button>
     );
   }
