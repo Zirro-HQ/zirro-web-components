@@ -1,3 +1,9 @@
+## <small>1.0.3 (2025-09-27)</small>
+
+* Merge pull request #5 from Zirro-HQ/tega/fix/pkgroot ([cf4aee9](https://github.com/Zirro-HQ/zirro-web-components/commit/cf4aee9)), closes [#5](https://github.com/Zirro-HQ/zirro-web-components/issues/5)
+* fix: add xl toggle ([31761aa](https://github.com/Zirro-HQ/zirro-web-components/commit/31761aa))
+* fix: toggle errors ([752768d](https://github.com/Zirro-HQ/zirro-web-components/commit/752768d))
+
 ## <small>1.0.2 (2025-09-27)</small>
 
 * fix: release ([770e4cb](https://github.com/Zirro-HQ/zirro-web-components/commit/770e4cb))
