@@ -1,0 +1,37 @@
+# Source files
+src/
+index.html
+postcss.config.js
+tailwind.config.js
+vite.config.ts
+tsconfig.json
+eslint.config.js
+.prettierrc
+.prettierignore
+
+# Development files
+.github/
+.husky/
+.vscode/
+.idea/
+.storybook/
+storybook-static/
+
+# Dependencies
+node_modules/
+
+# Build tools
+*.log
+.DS_Store
+.env*
+
+# Tests
+**/*.test.*
+**/*.spec.*
+**/*.stories.*
+
+# Development playground
+src/dev/
+
+# Configuration files
+.releaserc.json
