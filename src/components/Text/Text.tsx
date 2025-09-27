@@ -13,6 +13,7 @@ const textVariants = cva('font-jost', {
     },
     weight: {
       normal: 'font-normal', // 400
+      semibold: 'font-semibold', // 600
       heavy: 'font-bold', // 700
     },
   },
