@@ -34,7 +34,9 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "storybook:build": "npm run build-storybook",
-    "storybook:preview": "npx --yes serve storybook-static -p 6007"
+    "storybook:preview": "npx --yes serve storybook-static -p 6007",
+    "preparePub": "npm run build"
+
   },
   "keywords": [
     "react",
