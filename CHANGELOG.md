@@ -1,3 +1,8 @@
+## <small>1.0.4 (2025-09-28)</small>
+
+* Merge pull request #6 from Zirro-HQ/tega/fix/stories ([3e7ee8f](https://github.com/Zirro-HQ/zirro-web-components/commit/3e7ee8f)), closes [#6](https://github.com/Zirro-HQ/zirro-web-components/issues/6)
+* fix: install comands ([615636d](https://github.com/Zirro-HQ/zirro-web-components/commit/615636d))
+
 ## <small>1.0.3 (2025-09-27)</small>
 
 * Merge pull request #5 from Zirro-HQ/tega/fix/pkgroot ([cf4aee9](https://github.com/Zirro-HQ/zirro-web-components/commit/cf4aee9)), closes [#5](https://github.com/Zirro-HQ/zirro-web-components/issues/5)
