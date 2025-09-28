@@ -30,11 +30,11 @@ export const Welcome: Story = {
       <div className='rounded-lg p-6 mb-8'>
         <h2 className='text-2xl mb-4'>Quick Start</h2>
         <div className='bg-gray-900 text-green-400 p-4 rounded font-mono text-sm mb-4'>
-          <div>npm install @zirro/web-components</div>
+          <div>npm install @zirro-hq/web-components</div>
         </div>
         <div className='bg-gray-900 text-white p-4 rounded text-sm'>
-          <pre className='text-sm text-green-400'>{`import { Button, Input, Card } from '@zirro/web-components';
-import '@zirro/web-components/styles';
+          <pre className='text-sm text-green-400'>{`import { Button, Input, Card } from '@zirro-hq/web-components';
+import '@zirro-hq/web-components/styles';
 
 function App() {
   return (
@@ -62,13 +62,13 @@ function App() {
             <div className='mb-6'>
               <h4 className='font-medium mb-3'>Installation</h4>
               <div className='bg-gray-900 text-green-400 p-3 rounded font-mono text-sm'>
-                npm install @zirro/web-components
+                npm install @zirro-hq/web-components
               </div>
             </div>
             <div className='mb-6'>
               <h4 className='font-medium mb-3'>Usage</h4>
               <div className='bg-gray-900 text-white p-4 rounded text-sm mb-4'>
-                <pre className='text-sm text-green-400'>{`import { Button } from '@zirro/web-components';
+                <pre className='text-sm text-green-400'>{`import { Button } from '@zirro-hq/web-components';
 
 <Button variant="primary">Primary Button</Button>
 <Button variant="secondary">Secondary</Button>
@@ -101,13 +101,13 @@ function App() {
             <div className='mb-6'>
               <h4 className='font-medium mb-3'>Installation</h4>
               <div className='bg-gray-900 text-green-400 p-3 rounded font-mono text-sm'>
-                npm install @zirro/web-components
+                npm install @zirro-hq/web-components
               </div>
             </div>
             <div className='mb-6'>
               <h4 className='font-medium mb-3'>Usage</h4>
               <div className='bg-gray-900 text-white p-4 rounded text-sm mb-4'>
-                <pre className='text-sm text-green-400'>{`import { Toggle } from '@zirro/web-components';
+                <pre className='text-sm text-green-400'>{`import { Toggle } from '@zirro-hq/web-components';
 
 <Toggle 
   variant="text"
@@ -159,13 +159,13 @@ function App() {
             <div className='mb-6'>
               <h4 className='font-medium mb-3'>Installation</h4>
               <div className='bg-gray-900 text-green-400 p-3 rounded font-mono text-sm'>
-                npm install @zirro/web-components
+                npm install @zirro-hq/web-components
               </div>
             </div>
             <div className='mb-6'>
               <h4 className='font-medium mb-3'>Usage</h4>
               <div className='bg-gray-900 text-white p-4 rounded text-sm mb-4'>
-                <pre className='text-sm text-green-400'>{`import { Input } from '@zirro/web-components';
+                <pre className='text-sm text-green-400'>{`import { Input } from '@zirro-hq/web-components';
 
 <Input 
   label="Email Address"
@@ -216,13 +216,13 @@ function App() {
             <div className='mb-6'>
               <h4 className='font-medium mb-3'>Installation</h4>
               <div className='bg-gray-900 text-green-400 p-3 rounded font-mono text-sm'>
-                npm install @zirro/web-components
+                npm install @zirro-hq/web-components
               </div>
             </div>
             <div className='mb-6'>
               <h4 className='font-medium mb-3'>Usage</h4>
               <div className='bg-gray-900 text-white p-4 rounded text-sm mb-4'>
-                <pre className='text-sm text-green-400'>{`import { Card } from '@zirro/web-components';
+                <pre className='text-sm text-green-400'>{`import { Card } from '@zirro-hq/web-components';
 
 <Card variant="elevated" padding="md">
   <h3>Card Title</h3>
@@ -262,13 +262,13 @@ function App() {
             <div className='mb-6'>
               <h4 className='font-medium mb-3'>Installation</h4>
               <div className='bg-gray-900 text-green-400 p-3 rounded font-mono text-sm'>
-                npm install @zirro/web-components
+                npm install @zirro-hq/web-components
               </div>
             </div>
             <div className='mb-6'>
               <h4 className='font-medium mb-3'>Usage</h4>
               <div className='bg-gray-900 text-white p-4 rounded text-sm mb-4'>
-                <pre className='text-sm text-green-400'>{`import { Text } from '@zirro/web-components';
+                <pre className='text-sm text-green-400'>{`import { Text } from '@zirro-hq/web-components';
 
 <Text size="large" weight="heavy" as="h1">
   Large Heavy Heading
