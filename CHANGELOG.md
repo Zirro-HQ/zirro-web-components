@@ -1,3 +1,8 @@
+## 1.1.0 (2025-09-30)
+
+* Merge pull request #7 from Zirro-HQ/tega/feat/booking-components ([ccf3ff2](https://github.com/Zirro-HQ/zirro-web-components/commit/ccf3ff2)), closes [#7](https://github.com/Zirro-HQ/zirro-web-components/issues/7)
+* feat: add chart component ([689c868](https://github.com/Zirro-HQ/zirro-web-components/commit/689c868))
+
 ## <small>1.0.4 (2025-09-28)</small>
 
 * Merge pull request #6 from Zirro-HQ/tega/fix/stories ([3e7ee8f](https://github.com/Zirro-HQ/zirro-web-components/commit/3e7ee8f)), closes [#6](https://github.com/Zirro-HQ/zirro-web-components/issues/6)
