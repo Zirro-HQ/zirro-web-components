@@ -363,7 +363,7 @@ export const Layout = forwardRef<HTMLDivElement, LayoutProps>(
             onClick={() => handleNavigationClick(item)}
             disabled={item.disabled}
             className={cn(
-              'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
+              'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 cursor-pointer',
               isMobile ? 'flex-col gap-1 text-xs' : '',
               !isMobile && sidebarCollapsed
                 ? 'justify-center px-2'
@@ -523,15 +523,17 @@ export const Layout = forwardRef<HTMLDivElement, LayoutProps>(
                       key={section.id}
                       className={sectionIndex > 0 ? 'mt-8' : ''}
                     >
-                      <h3
-                        className={sectionHeaderVariants({
-                          collapsed: sidebarCollapsed,
-                        })}
-                        style={{ color: inactiveTextColor }}
-                      >
-                        {section.title}
-                      </h3>
-                      <div className='space-y-2 mt-3'>
+                      {section.title && (
+                        <h3
+                          className={sectionHeaderVariants({
+                            collapsed: sidebarCollapsed,
+                          })}
+                          style={{ color: inactiveTextColor }}
+                        >
+                          {section.title}
+                        </h3>
+                      )}
+                      <div className={cn('space-y-2', section.title && 'mt-3')}>
                         {section.items.map(item => renderNavigationItem(item))}
                       </div>
                     </div>
@@ -549,7 +551,7 @@ export const Layout = forwardRef<HTMLDivElement, LayoutProps>(
                 <button
                   onClick={handleSidebarToggle}
                   className={cn(
-                    'hidden w-full items-center rounded-lg p-2 text-[#808080] hover:bg-gray-800 hover:text-white lg:flex transition-colors',
+                    'hidden w-full items-center rounded-lg p-2 text-[#808080] hover:bg-gray-800 hover:text-white lg:flex transition-colors cursor-pointer',
                     sidebarCollapsed ? 'justify-center' : 'justify-start gap-3'
                   )}
                   aria-label={
@@ -603,7 +605,7 @@ export const Layout = forwardRef<HTMLDivElement, LayoutProps>(
                     <div className='flex items-center gap-3'>
                       <button
                         onClick={handleMobileMenuToggle}
-                        className='rounded-lg p-1'
+                        className='rounded-lg p-1 cursor-pointer'
                         aria-label='Open navigation menu'
                       >
                         <Avatar
