@@ -1,3 +1,12 @@
+## 1.2.0 (2025-10-01)
+
+* Merge branch 'main' of github.com:Zirro-HQ/zirro-web-components into tega/feat/booking-components ([1a2f031](https://github.com/Zirro-HQ/zirro-web-components/commit/1a2f031))
+* Merge branch 'main' of github.com:Zirro-HQ/zirro-web-components into tega/feat/booking-components ([2795439](https://github.com/Zirro-HQ/zirro-web-components/commit/2795439))
+* Merge pull request #8 from Zirro-HQ/tega/feat/booking-components ([e229e37](https://github.com/Zirro-HQ/zirro-web-components/commit/e229e37)), closes [#8](https://github.com/Zirro-HQ/zirro-web-components/issues/8)
+* Merge pull request #9 from Zirro-HQ/tega/feat/booking-components ([0ab1a0a](https://github.com/Zirro-HQ/zirro-web-components/commit/0ab1a0a)), closes [#9](https://github.com/Zirro-HQ/zirro-web-components/issues/9)
+* fix: remove unused export ([2599f82](https://github.com/Zirro-HQ/zirro-web-components/commit/2599f82))
+* feat: layout component ([fa379cc](https://github.com/Zirro-HQ/zirro-web-components/commit/fa379cc))
+
 ## 1.1.0 (2025-09-30)
 
 * Merge pull request #7 from Zirro-HQ/tega/feat/booking-components ([ccf3ff2](https://github.com/Zirro-HQ/zirro-web-components/commit/ccf3ff2)), closes [#7](https://github.com/Zirro-HQ/zirro-web-components/issues/7)
