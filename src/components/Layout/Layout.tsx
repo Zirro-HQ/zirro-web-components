@@ -1,10 +1,4 @@
-import React, {
-  forwardRef,
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-} from 'react';
+import React, { forwardRef, useState, useEffect, useCallback } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/utils/cn';
 import type { BaseProps } from '@/types';
@@ -85,28 +79,6 @@ const bottomNavVariants = cva(
     },
     defaultVariants: {
       variant: 'default',
-    },
-  }
-);
-
-const navItemVariants = cva(
-  'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
-  {
-    variants: {
-      variant: {
-        sidebar:
-          'text-[#808080] hover:text-[#FFFFFF] data-[active=true]:text-[#FFFFFF]',
-        bottomNav:
-          'flex-col gap-1 text-xs text-[#808080] hover:text-[#FFFFFF] data-[active=true]:text-[#FFFFFF]',
-      },
-      collapsed: {
-        true: 'justify-center px-2',
-        false: 'justify-start',
-      },
-    },
-    defaultVariants: {
-      variant: 'sidebar',
-      collapsed: false,
     },
   }
 );
