@@ -1,6 +1,14 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./src/**/*.{js,ts,jsx,tsx}'],
+  safelist: [
+    'translate-x-0',
+    'translate-x-4',
+    'translate-x-5',
+    'transform',
+    'transition',
+    'duration-200',
+  ],
   theme: {
     extend: {
       colors: {

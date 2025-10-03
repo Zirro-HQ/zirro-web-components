@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Button, ArrowIcon, EyeIcon, PlusIcon } from './Button';
+import { DropdownItem } from './DropdownItem';
 
 const meta: Meta<typeof Button> = {
   title: 'Components/Button',
@@ -253,5 +254,105 @@ export const Interactive: Story = {
         </Button>
       </div>
     );
+  },
+};
+
+// Dropdown Examples
+export const BasicDropdown: Story = {
+  render: () => (
+    <Button
+      variant='primary'
+      dropdownContent={
+        <>
+          <DropdownItem>Edit</DropdownItem>
+          <DropdownItem>Copy</DropdownItem>
+          <DropdownItem>Delete</DropdownItem>
+        </>
+      }
+    >
+      Actions
+    </Button>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Basic dropdown button with menu items.',
+      },
+    },
+  },
+};
+
+export const BookingsDropdown: Story = {
+  render: () => (
+    <Button
+      variant='primary'
+      size='lg'
+      className='bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-full'
+      dropdownContent={
+        <>
+          <DropdownItem>📅 View All Bookings</DropdownItem>
+          <DropdownItem>➕ New Booking</DropdownItem>
+          <DropdownItem>📊 Booking Analytics</DropdownItem>
+          <DropdownItem>⚙️ Booking Settings</DropdownItem>
+        </>
+      }
+    >
+      📅 BOOKINGS
+    </Button>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Bookings dropdown button styled like the image provided.',
+      },
+    },
+  },
+};
+
+export const DropdownWithIcons: Story = {
+  render: () => (
+    <Button
+      variant='outline'
+      dropdownContent={
+        <>
+          <DropdownItem Icon={EyeIcon}>View Details</DropdownItem>
+          <DropdownItem Icon={PlusIcon}>Add Item</DropdownItem>
+          <DropdownItem Icon={ArrowIcon}>Navigate</DropdownItem>
+        </>
+      }
+    >
+      Menu with Icons
+    </Button>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Dropdown with icons in menu items.',
+      },
+    },
+  },
+};
+
+export const DropdownWithDisabledItems: Story = {
+  render: () => (
+    <Button
+      variant='secondary'
+      dropdownContent={
+        <>
+          <DropdownItem>Available Action</DropdownItem>
+          <DropdownItem disabled>Disabled Action</DropdownItem>
+          <DropdownItem>Another Action</DropdownItem>
+        </>
+      }
+    >
+      Mixed States
+    </Button>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Dropdown with both enabled and disabled menu items.',
+      },
+    },
   },
 };

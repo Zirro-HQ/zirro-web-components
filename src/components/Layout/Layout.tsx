@@ -17,7 +17,7 @@ const layoutVariants = cva('min-h-screen bg-gray-50', {
 });
 
 const sidebarVariants = cva(
-  'fixed left-0 top-0 z-40 h-screen w-64 transform text-white transition-transform duration-300 ease-in-out lg:translate-x-0 flex flex-col',
+  'fixed left-0 top-0 z-40 h-screen transform text-white transition-transform duration-300 ease-in-out flex flex-col',
   {
     variants: {
       collapsed: {
@@ -26,27 +26,12 @@ const sidebarVariants = cva(
       },
       mobile: {
         open: 'translate-x-0',
-        closed: '-translate-x-full',
+        closed: '-translate-x-full lg:translate-x-0',
       },
     },
     defaultVariants: {
       collapsed: false,
       mobile: 'closed',
-    },
-  }
-);
-
-const mainContentVariants = cva(
-  'flex-1 transition-all duration-300 ease-in-out',
-  {
-    variants: {
-      sidebarCollapsed: {
-        true: 'lg:ml-16',
-        false: 'lg:ml-64',
-      },
-    },
-    defaultVariants: {
-      sidebarCollapsed: false,
     },
   }
 );
@@ -68,20 +53,17 @@ const topBarVariants = cva(
   }
 );
 
-const bottomNavVariants = cva(
-  'fixed bottom-0 left-0 right-0 z-30 px-4 py-2 lg:hidden',
-  {
-    variants: {
-      variant: {
-        default: 'bg-black',
-        dark: 'bg-gray-900 border-gray-700',
-      },
+const bottomNavVariants = cva('fixed bottom-0 left-0 right-0 z-30 px-4 py-2', {
+  variants: {
+    variant: {
+      default: 'bg-black',
+      dark: 'bg-gray-900 border-gray-700',
     },
-    defaultVariants: {
-      variant: 'default',
-    },
-  }
-);
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+});
 
 const sectionHeaderVariants = cva(
   'px-3 py-2 text-xs font-semibold uppercase tracking-wider',
@@ -176,6 +158,8 @@ export interface LayoutProps
   showBottomNav?: boolean;
   /** Whether to show the top bar */
   showTopBar?: boolean;
+  /** Whether to show the top bar on desktop (if false, only shows on mobile) */
+  showDesktopTopBar?: boolean;
   /** Top bar variant */
   topBarVariant?: 'default' | 'transparent' | 'gradient';
   /** Bottom nav variant */
@@ -194,6 +178,8 @@ export interface LayoutProps
   inactiveTextColor?: string;
   /** Custom font family for the layout */
   fontFamily?: string;
+  /** Custom background for the main content area */
+  contentAreaBackground?: string;
   /** Mobile top bar content (overrides default mobile header) */
   mobileTopBarContent?: React.ReactNode;
   /** Brand info for mobile top bar */
@@ -291,6 +277,7 @@ export const Layout = forwardRef<HTMLDivElement, LayoutProps>(
       showSidebar = true,
       showBottomNav = true,
       showTopBar = true,
+      showDesktopTopBar = true,
       topBarVariant = 'default',
       bottomNavVariant = 'default',
       logo,
@@ -300,6 +287,7 @@ export const Layout = forwardRef<HTMLDivElement, LayoutProps>(
       activeIconColor = '#2C4BFF',
       inactiveTextColor = '#808080',
       fontFamily,
+      contentAreaBackground,
       mobileTopBarContent,
       brandInfo,
       sideBarExpandLabel = 'COLLAPSE',
@@ -313,14 +301,20 @@ export const Layout = forwardRef<HTMLDivElement, LayoutProps>(
   ) => {
     const [sidebarCollapsed, setSidebarCollapsed] = useState(defaultCollapsed);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
-      // Close mobile menu when screen size changes to desktop
+      // Handle responsive behavior
       const handleResize = () => {
-        if (window.innerWidth >= 1024) {
+        const mobile = window.innerWidth < 1024;
+        setIsMobile(mobile);
+        if (!mobile) {
           setMobileMenuOpen(false);
         }
       };
+
+      // Set initial state
+      handleResize();
 
       window.addEventListener('resize', handleResize);
       return () => window.removeEventListener('resize', handleResize);
@@ -479,8 +473,8 @@ export const Layout = forwardRef<HTMLDivElement, LayoutProps>(
           />
         )}
 
-        {/* Sidebar */}
-        {showSidebar && (
+        {/* Sidebar - Desktop only or Mobile when menu is open */}
+        {showSidebar && (!isMobile || mobileMenuOpen) && (
           <aside
             className={cn(
               sidebarVariants({
@@ -585,21 +579,42 @@ export const Layout = forwardRef<HTMLDivElement, LayoutProps>(
         {/* Main content area */}
         <div
           className={cn(
-            mainContentVariants({
-              sidebarCollapsed: showSidebar ? sidebarCollapsed : false,
-            }),
-            !showSidebar && 'ml-0'
+            'flex-1 transition-all duration-300 ease-in-out',
+            // Only add left margin on desktop when sidebar is visible
+            !isMobile && showSidebar
+              ? sidebarCollapsed
+                ? 'ml-16'
+                : 'ml-64'
+              : 'ml-0'
           )}
+          style={{
+            marginLeft:
+              !isMobile && showSidebar
+                ? sidebarCollapsed
+                  ? '64px'
+                  : '256px'
+                : '0px',
+          }}
         >
           {/* Top bar */}
           {showTopBar && (
-            <header className={cn(topBarVariants({ variant: topBarVariant }))}>
+            <header
+              className={cn(
+                topBarVariants({ variant: topBarVariant }),
+                !showDesktopTopBar && 'lg:hidden'
+              )}
+            >
               {/* Mobile custom top bar */}
               {mobileTopBarContent ? (
                 <div className='lg:hidden w-full'>{mobileTopBarContent}</div>
               ) : (
                 // Mobile default layout with user and brand info
-                <div className='lg:hidden w-full flex items-center justify-between'>
+                <div
+                  className={cn(
+                    'w-full flex items-center justify-between',
+                    showDesktopTopBar ? 'lg:hidden' : ''
+                  )}
+                >
                   {/* Left: User Avatar */}
                   {user && (
                     <div className='flex items-center gap-3'>
@@ -648,51 +663,58 @@ export const Layout = forwardRef<HTMLDivElement, LayoutProps>(
               )}
 
               {/* Desktop layout */}
-              <div className='hidden lg:flex w-full items-center justify-between'>
-                <div className='flex items-center gap-4'>
-                  {/* Title */}
-                  {title && (
-                    <h1 className='text-lg font-semibold text-gray-900'>
-                      {title}
-                    </h1>
+              {showDesktopTopBar && (
+                <div className='hidden lg:flex w-full items-center justify-between'>
+                  <div className='flex items-center gap-4'>
+                    {/* Title */}
+                    {title && (
+                      <h1 className='text-lg font-semibold text-gray-900'>
+                        {title}
+                      </h1>
+                    )}
+                  </div>
+
+                  {/* Top bar actions */}
+                  {topBarActions.length > 0 && (
+                    <div className='flex items-center gap-2'>
+                      {topBarActions.map(action => {
+                        const ActionIcon = action.icon;
+                        return (
+                          <button
+                            key={action.id}
+                            onClick={action.onClick}
+                            disabled={action.disabled}
+                            className='relative rounded-lg p-2 text-gray-600 hover:bg-gray-100 disabled:opacity-50'
+                            aria-label={action.label}
+                            title={action.label}
+                          >
+                            <ActionIcon className='h-5 w-5' />
+                            {action.badge && (
+                              <span className='absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs font-medium text-white'>
+                                {typeof action.badge === 'number' &&
+                                action.badge > 9
+                                  ? '9+'
+                                  : action.badge}
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
                   )}
                 </div>
-
-                {/* Top bar actions */}
-                {topBarActions.length > 0 && (
-                  <div className='flex items-center gap-2'>
-                    {topBarActions.map(action => {
-                      const ActionIcon = action.icon;
-                      return (
-                        <button
-                          key={action.id}
-                          onClick={action.onClick}
-                          disabled={action.disabled}
-                          className='relative rounded-lg p-2 text-gray-600 hover:bg-gray-100 disabled:opacity-50'
-                          aria-label={action.label}
-                          title={action.label}
-                        >
-                          <ActionIcon className='h-5 w-5' />
-                          {action.badge && (
-                            <span className='absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs font-medium text-white'>
-                              {typeof action.badge === 'number' &&
-                              action.badge > 9
-                                ? '9+'
-                                : action.badge}
-                            </span>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
+              )}
             </header>
           )}
 
           {/* Main content */}
           <main
             className={cn('flex-1', showBottomNav && 'pb-16 lg:pb-0')}
+            style={{
+              ...(contentAreaBackground && {
+                backgroundColor: contentAreaBackground,
+              }),
+            }}
             role='main'
             aria-label='Main content'
           >
@@ -700,8 +722,8 @@ export const Layout = forwardRef<HTMLDivElement, LayoutProps>(
           </main>
         </div>
 
-        {/* Bottom navigation (mobile only) */}
-        {showBottomNav && (
+        {/* Bottom navigation - Mobile only */}
+        {showBottomNav && isMobile && (
           <nav
             className={cn(bottomNavVariants({ variant: bottomNavVariant }))}
             aria-label='Mobile navigation'

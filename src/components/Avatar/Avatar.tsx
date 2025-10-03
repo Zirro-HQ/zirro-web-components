@@ -50,6 +50,10 @@ export interface AvatarProps
   fallback?: string;
   /** Name to generate initials from if fallback not provided */
   name?: string;
+  /** Whether to show the name label next to the avatar */
+  showName?: boolean;
+  /** Position of the name label relative to the avatar */
+  namePosition?: 'right' | 'bottom';
 }
 
 /**
@@ -66,8 +70,11 @@ export interface AvatarProps
  * // With initials fallback
  * <Avatar name="John Doe" fallback="JD" />
  *
- * // Auto-generated initials
- * <Avatar name="John Doe" size="lg" color="green" />
+ * // Auto-generated initials with name label
+ * <Avatar name="John Doe" size="lg" color="green" showName />
+ *
+ * // Name below avatar
+ * <Avatar name="Jane Smith" showName namePosition="bottom" />
  *
  * // Custom styling
  * <Avatar
@@ -75,12 +82,25 @@ export interface AvatarProps
  *   size="xl"
  *   variant="square"
  *   color="purple"
+ *   showName
  * />
  * ```
  */
 export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
   (
-    { className, size, variant, color, src, alt, fallback, name, ...props },
+    {
+      className,
+      size,
+      variant,
+      color,
+      src,
+      alt,
+      fallback,
+      name,
+      showName = false,
+      namePosition = 'right',
+      ...props
+    },
     ref
   ) => {
     // Generate initials from name if fallback not provided
@@ -95,12 +115,8 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
 
     const displayText = fallback || (name ? getInitials(name) : '?');
 
-    return (
-      <div
-        ref={ref}
-        className={cn(avatarVariants({ size, variant, color }), className)}
-        {...props}
-      >
+    const avatarElement = (
+      <div className={cn(avatarVariants({ size, variant, color }))}>
         {src ? (
           <img
             src={src}
@@ -117,6 +133,34 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
         ) : (
           <span className='leading-none'>{displayText}</span>
         )}
+      </div>
+    );
+
+    if (!showName || !name) {
+      return (
+        <div ref={ref} className={cn(className)} {...props}>
+          {avatarElement}
+        </div>
+      );
+    }
+
+    const containerClass = cn(
+      'inline-flex items-center',
+      namePosition === 'right' ? 'gap-3' : 'flex-col gap-2',
+      className
+    );
+
+    return (
+      <div ref={ref} className={containerClass} {...props}>
+        {avatarElement}
+        <span
+          className={cn(
+            'font-medium text-gray-900',
+            namePosition === 'bottom' && 'text-center text-sm'
+          )}
+        >
+          {name}
+        </span>
       </div>
     );
   }

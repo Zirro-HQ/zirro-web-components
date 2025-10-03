@@ -430,6 +430,10 @@ const meta: Meta<typeof Layout> = {
       control: 'text',
       description: 'Custom font family for the layout',
     },
+    contentAreaBackground: {
+      control: 'color',
+      description: 'Custom background color for the main content area',
+    },
   },
 };
 
@@ -846,6 +850,38 @@ export const ResponsiveShowcase: Story = {
       description: {
         story:
           'Demonstrates responsive behavior across different screen sizes and devices.',
+      },
+    },
+  },
+};
+
+// Custom Content Area Background
+export const CustomContentBackground: Story = {
+  args: {
+    title: 'Custom Background',
+    navigationSections: dashboardNavigationSections,
+    user: sampleUser,
+    topBarActions,
+    contentAreaBackground: '#f0f9ff', // Light blue background
+    children: (
+      <div className='p-6'>
+        <div className='rounded-lg bg-white p-6 shadow-sm'>
+          <h2 className='mb-4 text-xl font-semibold'>
+            Custom Content Background
+          </h2>
+          <p className='text-gray-600'>
+            This layout demonstrates a custom background color for the main
+            content area. The content area now has a light blue background
+            (#f0f9ff) instead of the default.
+          </p>
+        </div>
+      </div>
+    ),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Layout with custom background color for the main content area.',
       },
     },
   },
