@@ -3,11 +3,11 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/utils/cn';
 import type { BaseProps } from '@/types';
 
-const cardVariants = cva('rounded-2xl transition-all duration-200', {
+const cardVariants = cva('rounded-xl transition-all duration-200', {
   variants: {
     variant: {
-      // Default card with white background and subtle shadow
-      default: 'bg-white border border-gray-200 shadow-sm hover:shadow-md',
+      // Default card with white background and no shadow
+      default: 'bg-white border border-gray-200',
 
       // Elevated card with more prominent shadow
       elevated:
@@ -15,7 +15,7 @@ const cardVariants = cva('rounded-2xl transition-all duration-200', {
 
       // Gradient card for progress/status indicators
       gradient:
-        'bg-gradient-to-r from-yellow-200 via-purple-200 to-blue-200 border-0 shadow-sm',
+        'bg-gradient-to-r from-yellow-200 via-purple-200 to-blue-200 border-0',
 
       // Outlined card with dashed border (for events/appointments)
       outlined: 'bg-white border-2 border-dashed border-gray-300',
@@ -47,6 +47,27 @@ export interface CardProps
     VariantProps<typeof cardVariants> {
   /** Whether the card should be interactive (clickable) */
   interactive?: boolean;
+  /** Custom background image URL */
+  backgroundImage?: string;
+  /** Custom background color */
+  backgroundColor?: string;
+  /** Whether to remove border radius */
+  noBorderRadius?: boolean;
+  /** Whether to remove border */
+  noBorder?: boolean;
+  /** Custom padding (overrides padding variant) */
+  customPadding?: string;
+  /** Whether the card is in disabled/empty state */
+  disabled?: boolean;
+  /** Header text for empty state */
+  emptyStateHeader?: string;
+  /** Description text for empty state */
+  emptyStateDescription?: string;
+  /** Action button for empty state */
+  emptyStateAction?: {
+    label: string;
+    onClick: () => void;
+  };
 }
 
 /**
@@ -68,29 +89,143 @@ export interface CardProps
  *   Progress content
  * </Card>
  *
- * // Outlined card for events
- * <Card variant="outlined" padding="lg">
- *   Event details
+ * // Card with custom background image
+ * <Card
+ *   backgroundImage="/hero-image.jpg"
+ *   noBorderRadius
+ *   customPadding="p-12"
+ * >
+ *   Hero content
  * </Card>
+ *
+ * // Card with custom background color
+ * <Card backgroundColor="#f3f4f6" customPadding="px-4 py-8">
+ *   Custom styled content
+ * </Card>
+ *
+ * // Card without border
+ * <Card noBorder>
+ *   <p>Clean card without border</p>
+ * </Card>
+ *
+ * // Disabled/Empty state card
+ * <Card
+ *   disabled
+ *   emptyStateHeader="NOTHING HERE"
+ *   emptyStateDescription="Bookings will show up here. You can also manually create an appointment."
+ *   emptyStateAction={{
+ *     label: "SETUP YOUR SCHEDULE",
+ *     onClick: () => console.log("Setup clicked")
+ *   }}
+ * />
  * ```
  */
 export const Card = forwardRef<HTMLDivElement, CardProps>(
   (
-    { className, variant, padding, interactive, children, onClick, ...props },
+    {
+      className,
+      variant,
+      padding,
+      interactive,
+      backgroundImage,
+      backgroundColor,
+      noBorderRadius,
+      noBorder,
+      customPadding,
+      disabled,
+      emptyStateHeader,
+      emptyStateDescription,
+      emptyStateAction,
+      children,
+      onClick,
+      style,
+      ...props
+    },
     ref
   ) => {
     const isInteractive = interactive || !!onClick;
+
+    const customStyles = {
+      ...(backgroundImage && {
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }),
+      ...(backgroundColor && { backgroundColor }),
+      ...style,
+    };
+
+    // Render empty state if disabled
+    if (disabled) {
+      return (
+        <div
+          className={cn(
+            cardVariants({
+              variant,
+              padding: customPadding ? 'none' : padding,
+              interactive: false,
+            }),
+            'relative overflow-hidden',
+            noBorderRadius && 'rounded-none',
+            noBorder && 'border-0',
+            customPadding && customPadding,
+            className
+          )}
+          style={customStyles}
+          ref={ref}
+          {...props}
+        >
+          {/* Blurred background overlay */}
+          <div className='absolute inset-0 bg-white/80 backdrop-blur-md'></div>
+
+          {/* Content */}
+          <div className='relative z-10 flex flex-col items-center justify-center text-center py-12 px-6'>
+            {emptyStateHeader && (
+              <h3 className='text-xl font-bold text-gray-900 mb-3'>
+                {emptyStateHeader}
+              </h3>
+            )}
+            {emptyStateDescription && (
+              <p className='text-gray-600 mb-6 max-w-sm leading-relaxed'>
+                {emptyStateDescription}
+              </p>
+            )}
+            {emptyStateAction && (
+              <button
+                onClick={emptyStateAction.onClick}
+                className='bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-full transition-colors duration-200'
+              >
+                {emptyStateAction.label}
+              </button>
+            )}
+          </div>
+
+          {/* Background content to blur */}
+          <div className='absolute inset-0 opacity-20 pointer-events-none'>
+            {children}
+          </div>
+        </div>
+      );
+    }
 
     return (
       <div
         className={cn(
           cardVariants({
             variant,
-            padding,
+            padding: customPadding ? 'none' : padding,
             interactive: isInteractive,
           }),
+          noBorderRadius && 'rounded-none',
+          noBorder && 'border-0',
+          customPadding && customPadding,
           className
         )}
+        style={{
+          ...customStyles,
+          borderRadius: noBorderRadius ? 0 : '1.875rem',
+        }}
         ref={ref}
         onClick={onClick}
         role={isInteractive ? 'button' : undefined}

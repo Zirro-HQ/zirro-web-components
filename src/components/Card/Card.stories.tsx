@@ -360,3 +360,93 @@ export const PaddingVariations: Story = {
     },
   },
 };
+
+// Custom Background Examples
+export const CustomBackgrounds: Story = {
+  render: () => (
+    <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+      <Card
+        backgroundColor='#1e40af'
+        customPadding='p-8'
+        className='text-white'
+      >
+        <h3 className='mb-2 text-lg font-semibold'>Custom Background Color</h3>
+        <p className='text-blue-100'>
+          Card with custom blue background color and custom padding.
+        </p>
+      </Card>
+
+      <Card
+        backgroundImage='https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400&h=300&fit=crop'
+        customPadding='p-12'
+        className='text-white'
+      >
+        <div className='bg-black bg-opacity-50 p-4 rounded'>
+          <h3 className='mb-2 text-lg font-semibold'>Background Image</h3>
+          <p>Card with custom background image and overlay.</p>
+        </div>
+      </Card>
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Cards with custom background colors and images.',
+      },
+    },
+  },
+};
+
+// No Border Radius Example
+export const NoBorderRadius: Story = {
+  render: () => (
+    <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+      <Card variant='default'>
+        <h3 className='mb-2 text-lg font-semibold'>Default Border Radius</h3>
+        <p className='text-gray-600'>Standard rounded corners.</p>
+      </Card>
+
+      <Card variant='default' noBorderRadius>
+        <h3 className='mb-2 text-lg font-semibold'>No Border Radius</h3>
+        <p className='text-gray-600'>Sharp corners for modern layouts.</p>
+      </Card>
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Comparison of default rounded corners vs sharp corners.',
+      },
+    },
+  },
+};
+
+// Custom Padding Examples
+export const CustomPaddingExamples: Story = {
+  render: () => (
+    <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
+      <Card customPadding='p-2' backgroundColor='#fef3c7'>
+        <h4 className='text-sm font-semibold'>Minimal Padding</h4>
+        <p className='text-xs text-gray-600'>p-2 custom padding</p>
+      </Card>
+
+      <Card customPadding='px-8 py-4' backgroundColor='#dbeafe'>
+        <h4 className='text-sm font-semibold'>Asymmetric Padding</h4>
+        <p className='text-xs text-gray-600'>px-8 py-4 custom padding</p>
+      </Card>
+
+      <Card customPadding='p-12' backgroundColor='#dcfce7'>
+        <h4 className='text-sm font-semibold'>Large Padding</h4>
+        <p className='text-xs text-gray-600'>p-12 custom padding</p>
+      </Card>
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Examples of custom padding configurations using Tailwind classes.',
+      },
+    },
+  },
+};

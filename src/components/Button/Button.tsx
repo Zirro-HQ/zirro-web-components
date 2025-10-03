@@ -1,4 +1,11 @@
-import React, { forwardRef, type ButtonHTMLAttributes } from 'react';
+import React, {
+  forwardRef,
+  useState,
+  useRef,
+  useEffect,
+  type ButtonHTMLAttributes,
+} from 'react';
+import { createPortal } from 'react-dom';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/utils/cn';
 import type { BaseProps, LoadingState } from '@/types';
@@ -69,6 +76,14 @@ export interface ButtonProps
   'aria-controls'?: string;
   /** Whether the button represents a pressed state (for toggle buttons) */
   'aria-pressed'?: boolean;
+  /** Dropdown content (makes this a dropdown button) */
+  dropdownContent?: React.ReactNode;
+  /** Whether dropdown is controlled externally */
+  dropdownOpen?: boolean;
+  /** Callback when dropdown open state changes */
+  onDropdownToggle?: (open: boolean) => void;
+  /** Custom dropdown container className */
+  dropdownClassName?: string;
 }
 
 /**
@@ -176,6 +191,23 @@ const PlusIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+// Chevron down icon for dropdown buttons
+const ChevronDownIcon = ({ className }: { className?: string }) => (
+  <svg
+    className={cn('w-4 h-4', className)}
+    fill='none'
+    stroke='currentColor'
+    viewBox='0 0 24 24'
+  >
+    <path
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      strokeWidth={2}
+      d='M19 9l-7 7-7-7'
+    />
+  </svg>
+);
+
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
@@ -189,6 +221,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       iconPosition = 'left',
       children,
       disabled,
+      dropdownContent,
+      dropdownOpen: controlledOpen,
+      onDropdownToggle,
+      dropdownClassName,
+      onClick,
       'aria-describedby': ariaDescribedby,
       'aria-label': ariaLabel,
       'aria-expanded': ariaExpanded,
@@ -198,8 +235,69 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref
   ) => {
+    const [internalOpen, setInternalOpen] = useState(false);
+    const buttonRef = useRef<HTMLButtonElement>(null);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    // Use controlled state if provided, otherwise use internal state
+    const isOpen = controlledOpen !== undefined ? controlledOpen : internalOpen;
+    const setIsOpen = onDropdownToggle || setInternalOpen;
+
+    const isDropdown = !!dropdownContent;
     const isDisabled = disabled || isLoading || variant === 'disabled';
     const effectiveVariant = isDisabled ? 'disabled' : variant;
+
+    // Handle click outside to close dropdown
+    useEffect(() => {
+      if (!isDropdown || !isOpen) return;
+
+      const handleClickOutside = (event: MouseEvent) => {
+        if (
+          buttonRef.current &&
+          dropdownRef.current &&
+          !buttonRef.current.contains(event.target as Node) &&
+          !dropdownRef.current.contains(event.target as Node)
+        ) {
+          setIsOpen(false);
+        }
+      };
+
+      const handleEscape = (event: KeyboardEvent) => {
+        if (event.key === 'Escape') {
+          setIsOpen(false);
+          buttonRef.current?.focus();
+        }
+      };
+
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleEscape);
+
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+        document.removeEventListener('keydown', handleEscape);
+      };
+    }, [isDropdown, isOpen, setIsOpen]);
+
+    // Handle button click
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+      if (isDropdown) {
+        event.preventDefault();
+        setIsOpen(!isOpen);
+      }
+      onClick?.(event);
+    };
+
+    // Get button position for dropdown positioning
+    const getDropdownPosition = () => {
+      if (!buttonRef.current) return { top: 0, left: 0, width: 0 };
+
+      const rect = buttonRef.current.getBoundingClientRect();
+      return {
+        top: rect.bottom + window.scrollY + 4, // 4px gap
+        left: rect.left + window.scrollX,
+        width: rect.width,
+      };
+    };
 
     // Helper to render content with proper spacing
     const renderContent = () => {
@@ -213,12 +311,21 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       }
 
       const iconElement = Icon ? <Icon className='w-5 h-5' /> : null;
+      const dropdownIcon = isDropdown ? (
+        <ChevronDownIcon
+          className={cn(
+            'transition-transform duration-200',
+            isOpen && 'rotate-180'
+          )}
+        />
+      ) : null;
 
       if (iconPosition === 'right') {
         return (
           <>
             {children}
             {iconElement}
+            {dropdownIcon}
           </>
         );
       }
@@ -227,31 +334,71 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         <>
           {iconElement}
           {children}
+          {dropdownIcon}
         </>
       );
     };
 
+    // Render dropdown portal
+    const renderDropdown = () => {
+      if (!isDropdown || !isOpen || typeof window === 'undefined') return null;
+
+      const position = getDropdownPosition();
+
+      return createPortal(
+        <div
+          ref={dropdownRef}
+          className={cn(
+            'absolute z-50 bg-white border border-gray-200 rounded-lg shadow-lg py-1 min-w-max',
+            dropdownClassName
+          )}
+          style={{
+            top: position.top,
+            left: position.left,
+            minWidth: position.width,
+          }}
+        >
+          {dropdownContent}
+        </div>,
+        document.body
+      );
+    };
+
     return (
-      <button
-        className={cn(
-          buttonVariants({ variant: effectiveVariant, size, fullWidth }),
-          className
-        )}
-        ref={ref}
-        disabled={isDisabled}
-        aria-disabled={isDisabled}
-        aria-describedby={ariaDescribedby}
-        aria-label={ariaLabel}
-        aria-expanded={ariaExpanded}
-        aria-controls={ariaControls}
-        aria-pressed={ariaPressed}
-        aria-busy={isLoading}
-        {...props}
-      >
-        {renderContent()}
-        {/* Screen reader only text for loading state */}
-        {isLoading && <span className='sr-only'>{loadingText}</span>}
-      </button>
+      <>
+        <button
+          ref={node => {
+            // @ts-ignore - We need to assign to current for internal ref
+            buttonRef.current = node;
+            if (typeof ref === 'function') {
+              ref(node);
+            } else if (ref && 'current' in ref) {
+              // @ts-ignore - We need to assign to current for forwarded ref
+              ref.current = node;
+            }
+          }}
+          className={cn(
+            buttonVariants({ variant: effectiveVariant, size, fullWidth }),
+            className
+          )}
+          disabled={isDisabled}
+          onClick={handleClick}
+          aria-disabled={isDisabled}
+          aria-describedby={ariaDescribedby}
+          aria-label={ariaLabel}
+          aria-expanded={isDropdown ? isOpen : ariaExpanded}
+          aria-controls={ariaControls}
+          aria-pressed={ariaPressed}
+          aria-busy={isLoading}
+          aria-haspopup={isDropdown ? 'menu' : undefined}
+          {...props}
+        >
+          {renderContent()}
+          {/* Screen reader only text for loading state */}
+          {isLoading && <span className='sr-only'>{loadingText}</span>}
+        </button>
+        {renderDropdown()}
+      </>
     );
   }
 );
@@ -259,4 +406,4 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = 'Button';
 
 // Export icon components for external use
-export { ArrowIcon, EyeIcon, PlusIcon, LoadingSpinner };
+export { ArrowIcon, EyeIcon, PlusIcon, LoadingSpinner, ChevronDownIcon };
