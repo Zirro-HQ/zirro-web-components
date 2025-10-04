@@ -1,22 +1,24 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/utils/cn';
 import type { BaseProps } from '@/types';
 
 const drawerVariants = cva(
-  'fixed top-0 right-0 h-full bg-white shadow-2xl transform transition-all duration-300 ease-in-out z-50 w-full md:w-auto',
+  'fixed top-0 right-0 h-full bg-white shadow-2xl transform transition-all duration-300 ease-in-out z-50',
   {
     variants: {
       size: {
-        sm: 'md:w-80',
-        md: 'md:w-96',
-        lg: 'md:w-[500px]',
-        xl: 'md:w-[600px]',
+        sm: '',
+        md: '',
+        lg: '',
+        xl: '',
       },
+      // We keep the state variant to preserve the API, but avoid applying translate classes
+      // to prevent clashes with inline transforms used for reliability in consumers.
       state: {
-        closed: 'translate-x-full opacity-0',
-        open: 'translate-x-0 opacity-100',
+        closed: '',
+        open: '',
       },
     },
     defaultVariants: {
@@ -116,6 +118,23 @@ export const DrawerModal: React.FC<DrawerModalProps> = ({
   ...props
 }) => {
   const drawerRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  // Mount/visibility states ensure CSS transitions run on first open and on close
+  const [isMounted, setIsMounted] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const rafRef = useRef<number | null>(null);
+  const timeoutRef = useRef<number | null>(null);
+
+  // Handle responsive width
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Handle escape key
   useEffect(() => {
@@ -133,7 +152,7 @@ export const DrawerModal: React.FC<DrawerModalProps> = ({
 
   // Focus management
   useEffect(() => {
-    if (isOpen && drawerRef.current) {
+    if (isVisible && drawerRef.current) {
       const focusableElements = drawerRef.current.querySelectorAll(
         'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
       );
@@ -142,7 +161,7 @@ export const DrawerModal: React.FC<DrawerModalProps> = ({
         firstElement.focus();
       }
     }
-  }, [isOpen]);
+  }, [isVisible]);
 
   // Prevent body scroll when open
   useEffect(() => {
@@ -169,7 +188,7 @@ export const DrawerModal: React.FC<DrawerModalProps> = ({
       <div
         className={cn(
           backdropVariants({
-            state: isOpen ? 'open' : 'closed',
+            state: isVisible ? 'open' : 'closed',
             variant: backdropVariant,
           })
         )}
@@ -180,13 +199,23 @@ export const DrawerModal: React.FC<DrawerModalProps> = ({
       {/* Drawer */}
       <div
         ref={drawerRef}
-        className={cn(
-          drawerVariants({
-            size,
-            state: isOpen ? 'open' : 'closed',
-          }),
-          className
-        )}
+        className={cn(drawerVariants({ size }), className)}
+        style={
+          {
+            width: isMobile
+              ? '100vw'
+              : size === 'sm'
+                ? '320px'
+                : size === 'md'
+                  ? '384px'
+                  : size === 'xl'
+                    ? '600px'
+                    : '500px', // lg default
+            // Force transform/opacity inline to avoid missing Tailwind classes in consumer builds
+            transform: isVisible ? 'translateX(0)' : 'translateX(100%)',
+            opacity: isVisible ? 1 : 0,
+          } as React.CSSProperties
+        }
         role='dialog'
         aria-modal='true'
         aria-labelledby={title ? 'drawer-title' : undefined}
@@ -216,10 +245,56 @@ export const DrawerModal: React.FC<DrawerModalProps> = ({
         )}
 
         {/* Content */}
-        <div className='flex-1 overflow-y-auto p-6'>{children}</div>
+        <div
+          className={cn(
+            'flex-1 overflow-y-auto p-6 transform transition-all duration-500 ease-out',
+            isVisible ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'
+          )}
+          style={{
+            transitionDelay: isVisible ? '150ms' : '0ms',
+          }}
+        >
+          {children}
+        </div>
       </div>
     </>
   );
+
+  // Mount closed, then open on next frame so transition runs; delay unmount on close
+  useEffect(() => {
+    // Clear any pending async work to avoid races
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
+    if (isOpen) {
+      // Mount immediately
+      setIsMounted(true);
+      // Start from closed state explicitly
+      setIsVisible(false);
+      // Ensure the element renders in the closed state and a layout pass occurs
+      rafRef.current = requestAnimationFrame(() => {
+        void drawerRef.current?.offsetWidth; // reflow
+        // Double RAF to ensure styles are committed before toggling
+        rafRef.current = requestAnimationFrame(() => {
+          setIsVisible(true);
+        });
+      });
+    } else if (isMounted) {
+      // Begin closing transition and unmount after duration
+      setIsVisible(false);
+      timeoutRef.current = window.setTimeout(() => setIsMounted(false), 300);
+    }
+
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, [isOpen, isMounted]);
+
+  // Only render while mounted (open or closing)
+  if (!isMounted) {
+    return null;
+  }
 
   // Render in portal
   return typeof document !== 'undefined'
