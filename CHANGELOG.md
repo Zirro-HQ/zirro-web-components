@@ -1,3 +1,14 @@
+## 1.3.0 (2025-10-03)
+
+* Merge pull request #11 from Zirro-HQ/tega/feat/booking-components ([3177630](https://github.com/Zirro-HQ/zirro-web-components/commit/3177630)), closes [#11](https://github.com/Zirro-HQ/zirro-web-components/issues/11)
+* feat: web components ([7cf14fb](https://github.com/Zirro-HQ/zirro-web-components/commit/7cf14fb))
+
+## <small>1.2.1 (2025-10-01)</small>
+
+* Merge branch 'main' of github.com:Zirro-HQ/zirro-web-components into tega/feat/booking-components ([c629eff](https://github.com/Zirro-HQ/zirro-web-components/commit/c629eff))
+* Merge pull request #10 from Zirro-HQ/tega/feat/booking-components ([66c5a47](https://github.com/Zirro-HQ/zirro-web-components/commit/66c5a47)), closes [#10](https://github.com/Zirro-HQ/zirro-web-components/issues/10)
+* fix: bookings section spacing ([4d64277](https://github.com/Zirro-HQ/zirro-web-components/commit/4d64277))
+
 ## 1.2.0 (2025-10-01)
 
 * Merge branch 'main' of github.com:Zirro-HQ/zirro-web-components into tega/feat/booking-components ([1a2f031](https://github.com/Zirro-HQ/zirro-web-components/commit/1a2f031))
