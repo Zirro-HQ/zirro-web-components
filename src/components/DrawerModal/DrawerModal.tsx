@@ -58,6 +58,10 @@ export interface DrawerModalProps
   onClose: () => void;
   /** Drawer title */
   title?: string;
+  /** Optional custom header node. When provided, replaces the default header */
+  header?: React.ReactNode;
+  /** Optional custom footer node. Always rendered at the bottom inside the drawer */
+  footer?: React.ReactNode;
   /** Whether to show close button */
   showCloseButton?: boolean;
   /** Backdrop variant */
@@ -72,18 +76,19 @@ export interface DrawerModalProps
 
 const CloseIcon = () => (
   <svg
-    width='24'
-    height='24'
-    viewBox='0 0 24 24'
+    width='21'
+    height='21'
+    viewBox='0 0 21 21'
     fill='none'
     xmlns='http://www.w3.org/2000/svg'
   >
-    <path
-      d='M18 6L6 18M6 6L18 18'
-      stroke='currentColor'
-      strokeWidth='2'
-      strokeLinecap='round'
-      strokeLinejoin='round'
+    <line x1='20.3536' y1='0.853553' x2='1.35355' y2='19.8536' stroke='black' />
+    <line
+      y1='-0.5'
+      x2='26.8701'
+      y2='-0.5'
+      transform='matrix(0.707107 0.707107 0.707107 -0.707107 1 0.5)'
+      stroke='black'
     />
   </svg>
 );
@@ -108,6 +113,8 @@ export const DrawerModal: React.FC<DrawerModalProps> = ({
   isOpen,
   onClose,
   title,
+  header,
+  footer,
   size = 'lg',
   showCloseButton = true,
   backdropVariant = 'blur',
@@ -221,40 +228,58 @@ export const DrawerModal: React.FC<DrawerModalProps> = ({
         aria-labelledby={title ? 'drawer-title' : undefined}
         {...props}
       >
-        {/* Header */}
-        {(title || showCloseButton) && (
-          <div className='flex items-center justify-between border-b border-gray-200 p-6'>
-            {title && (
-              <h2
-                id='drawer-title'
-                className='text-lg font-semibold text-gray-900'
-              >
-                {title}
-              </h2>
-            )}
-            {showCloseButton && (
-              <button
-                onClick={onClose}
-                className='rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500'
-                aria-label='Close drawer'
-              >
-                <CloseIcon />
-              </button>
-            )}
-          </div>
-        )}
-
-        {/* Content */}
-        <div
-          className={cn(
-            'flex-1 overflow-y-auto p-6 transform transition-all duration-500 ease-out',
-            isVisible ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'
+        {/* Make the drawer body a flex column so footer pins to bottom */}
+        <div className='flex h-full flex-col'>
+          {/* Header */}
+          {header ? (
+            <div className='p-6'>
+              {typeof header === 'function' ? (header as any)() : header}
+            </div>
+          ) : (
+            (title || showCloseButton) && (
+              <div className='flex items-center justify-between p-6'>
+                {title && (
+                  <h2
+                    id='drawer-title'
+                    className='text-lg font-semibold text-gray-900'
+                  >
+                    {title}
+                  </h2>
+                )}
+                {showCloseButton && (
+                  <button
+                    onClick={onClose}
+                    className='rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                    aria-label='Close drawer'
+                  >
+                    <CloseIcon />
+                  </button>
+                )}
+              </div>
+            )
           )}
-          style={{
-            transitionDelay: isVisible ? '150ms' : '0ms',
-          }}
-        >
-          {children}
+
+          {/* Content */}
+          <div
+            className={cn(
+              'flex-1 overflow-y-auto p-6 transform transition-all duration-500 ease-out',
+              isVisible
+                ? 'translate-x-0 opacity-100'
+                : 'translate-x-8 opacity-0'
+            )}
+            style={{
+              transitionDelay: isVisible ? '150ms' : '0ms',
+            }}
+          >
+            {children}
+          </div>
+
+          {/* Footer pinned at bottom */}
+          {footer && (
+            <div className='mt-auto p-6'>
+              {typeof footer === 'function' ? (footer as any)() : footer}
+            </div>
+          )}
         </div>
       </div>
     </>

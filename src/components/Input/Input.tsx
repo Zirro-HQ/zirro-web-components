@@ -2,6 +2,7 @@ import {
   forwardRef,
   useState,
   useRef,
+  useEffect,
   type InputHTMLAttributes,
   type TextareaHTMLAttributes,
 } from 'react';
@@ -10,7 +11,7 @@ import { cn } from '@/utils/cn';
 import type { BaseProps } from '@/types';
 
 const inputVariants = cva(
-  'w-full border border-gray-900 bg-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed font-jost',
+  'w-full border !border-black bg-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 !focus:border-black disabled:opacity-50 disabled:cursor-not-allowed font-jost',
   {
     variants: {
       size: {
@@ -19,7 +20,7 @@ const inputVariants = cva(
         lg: 'px-5 py-4 text-lg rounded-lg',
       },
       variant: {
-        default: 'border-gray-900',
+        default: 'border-black',
         error: 'border-red-500 focus:ring-red-500',
         success: 'border-green-500 focus:ring-green-500',
       },
@@ -41,7 +42,7 @@ const inputVariants = cva(
   }
 );
 
-const labelVariants = cva('block font-jost font-normal text-gray-900 mb-2', {
+const labelVariants = cva('block font-jost font-normal text-gray-900', {
   variants: {
     size: {
       sm: 'text-sm',
@@ -57,6 +58,26 @@ const labelVariants = cva('block font-jost font-normal text-gray-900 mb-2', {
 type BaseInputProps = {
   /** Label text displayed above the input */
   label?: string;
+  /** Optional sub label content rendered to the right of the label row */
+  subLabel?: React.ReactNode;
+  /** Remove border radius, producing sharp corners */
+  noBorderRadius?: boolean;
+  /** Enable searchable dropdown (combobox) behavior */
+  combobox?: boolean;
+  /** Options for the combobox */
+  options?: Array<{
+    label: React.ReactNode;
+    value: string;
+    searchText?: string;
+  }>;
+  /** Controlled selected value (value of the chosen option) */
+  selectedValue?: string | undefined;
+  /** Default selected value (uncontrolled) */
+  defaultSelectedValue?: string;
+  /** Callback when an option is selected */
+  onSelectOption?: (option: { label: React.ReactNode; value: string }) => void;
+  /** Alignment of the selected value when displayed */
+  comboboxAlign?: 'left' | 'center' | 'right';
   /** Helper text displayed below the input */
   helperText?: string;
   /** Error message displayed below the input */
@@ -238,6 +259,7 @@ export const Input = forwardRef<
       variant,
       label,
       helperText,
+      subLabel,
       error,
       multiline = false,
       upload = false,
@@ -251,6 +273,13 @@ export const Input = forwardRef<
       onFilesChange,
       onFileDelete,
       required = false,
+      noBorderRadius = false,
+      combobox = false,
+      options = [],
+      selectedValue,
+      defaultSelectedValue,
+      onSelectOption,
+      comboboxAlign = 'left',
       'aria-describedby': ariaDescribedby,
       'aria-label': ariaLabel,
       'aria-invalid': ariaInvalid,
@@ -283,6 +312,7 @@ export const Input = forwardRef<
         multiline,
         upload,
       }),
+      noBorderRadius && 'rounded-none',
       className
     );
 
@@ -330,6 +360,48 @@ export const Input = forwardRef<
         onFilesChange?.(files);
       };
       input.click();
+    };
+
+    // Combobox state
+    const [isOpenCombo, setIsOpenCombo] = useState(false);
+    const [internalSelected, setInternalSelected] = useState<
+      string | undefined
+    >(defaultSelectedValue);
+    const comboButtonRef = useRef<HTMLDivElement>(null);
+    const comboListRef = useRef<HTMLUListElement>(null);
+
+    const currentValue =
+      selectedValue !== undefined ? selectedValue : internalSelected;
+    const selectedOption = options.find(o => o.value === currentValue);
+    const filtered = options;
+
+    // Close on outside click/escape
+    useEffect(() => {
+      if (!combobox || !isOpenCombo) return;
+      const onDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') setIsOpenCombo(false);
+      };
+      const onClick = (e: MouseEvent) => {
+        if (
+          !comboButtonRef.current?.contains(e.target as Node) &&
+          !comboListRef.current?.contains(e.target as Node)
+        ) {
+          setIsOpenCombo(false);
+        }
+      };
+      document.addEventListener('keydown', onDown);
+      document.addEventListener('mousedown', onClick);
+      return () => {
+        document.removeEventListener('keydown', onDown);
+        document.removeEventListener('mousedown', onClick);
+      };
+    }, [combobox, isOpenCombo]);
+
+    const handleSelect = (opt: { label: React.ReactNode; value: string }) => {
+      if (selectedValue === undefined) setInternalSelected(opt.value);
+      onSelectOption?.(opt);
+      setIsOpenCombo(false);
+      // no search state to clear
     };
 
     let inputElement;
@@ -502,6 +574,65 @@ export const Input = forwardRef<
           {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
         />
       );
+    } else if (combobox) {
+      // Accessible combobox (searchable select)
+      inputElement = (
+        <div className='relative w-full' ref={comboButtonRef}>
+          <div
+            role='combobox'
+            aria-expanded={isOpenCombo}
+            aria-controls={`${inputId}-listbox`}
+            aria-haspopup='listbox'
+            className={cn(
+              inputClasses,
+              'flex items-center w-full',
+              comboboxAlign === 'center'
+                ? 'justify-center'
+                : comboboxAlign === 'right'
+                  ? 'justify-end'
+                  : 'justify-start'
+            )}
+            onClick={() => setIsOpenCombo(o => !o)}
+          >
+            <input className='sr-only' readOnly value='' aria-hidden />
+            <span
+              className={cn(
+                'pointer-events-none select-none text-gray-900 w-full block truncate',
+                comboboxAlign === 'center'
+                  ? 'text-center'
+                  : comboboxAlign === 'right'
+                    ? 'text-right'
+                    : 'text-left'
+              )}
+            >
+              {selectedOption ? selectedOption.label : ''}
+            </span>
+          </div>
+          {isOpenCombo && (
+            <ul
+              id={`${inputId}-listbox`}
+              role='listbox'
+              ref={comboListRef}
+              className='absolute z-50 mt-2 max-h-56 w-full overflow-auto rounded-md border border-black bg-white shadow-lg'
+            >
+              {filtered.map(opt => (
+                <li
+                  key={opt.value}
+                  role='option'
+                  aria-selected={opt.value === currentValue}
+                  className={cn(
+                    'cursor-pointer px-4 py-2 hover:bg-gray-100',
+                    opt.value === currentValue && 'bg-gray-100'
+                  )}
+                  onClick={() => handleSelect(opt)}
+                >
+                  {opt.label}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      );
     } else {
       // Regular input
       inputElement = (
@@ -520,16 +651,24 @@ export const Input = forwardRef<
 
     return (
       <div className='w-full'>
-        {label && (
-          <label
-            htmlFor={inputId}
-            className={cn(
-              labelVariants({ size }),
-              required && "after:content-['*'] after:ml-1 after:text-red-500"
+        {(label || subLabel) && (
+          <div className='mb-2 flex items-baseline justify-between gap-4'>
+            {label && (
+              <label htmlFor={inputId} className={cn(labelVariants({ size }))}>
+                {label}
+                {required && (
+                  <span aria-hidden='true' className='ml-1 text-[#F00606]'>
+                    *
+                  </span>
+                )}
+              </label>
             )}
-          >
-            {label}
-          </label>
+            {subLabel && (
+              <div className='text-base font-jost text-gray-900'>
+                {subLabel}
+              </div>
+            )}
+          </div>
         )}
 
         {inputElement}

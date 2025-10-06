@@ -110,6 +110,7 @@ export const AllSizes: Story = {
           <Text size='small'>Small text (0.875rem)</Text>
           <Text size='medium'>Medium text (1rem) - Default</Text>
           <Text size='large'>Large text (1.25rem)</Text>
+          <Text size='xlarge'>Xlarge text (1.5rem)</Text>
         </div>
       </div>
 

@@ -22,7 +22,7 @@ const tabsVariants = cva('flex flex-col', {
   },
 });
 
-const tabsListVariants = cva('flex', {
+const tabsListVariants = cva('flex overflow-x-auto scrollbar-hide', {
   variants: {
     variant: {
       default: 'border-b border-gray-200',
@@ -30,9 +30,9 @@ const tabsListVariants = cva('flex', {
       pills: 'bg-gray-100 rounded-lg p-1',
     },
     size: {
-      sm: 'gap-4',
-      md: 'gap-6',
-      lg: 'gap-8',
+      sm: 'gap-2 md:gap-4',
+      md: 'gap-3 md:gap-6',
+      lg: 'gap-4 md:gap-8',
     },
   },
   defaultVariants: {
@@ -42,25 +42,25 @@ const tabsListVariants = cva('flex', {
 });
 
 const tabTriggerVariants = cva(
-  'inline-flex items-center justify-center px-4 py-2 text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed',
+  'inline-flex items-center justify-center whitespace-nowrap px-4 py-2 text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed',
   {
     variants: {
       variant: {
         default:
-          'border-b-2 border-transparent hover:text-gray-700 hover:border-gray-300 data-[state=active]:text-blue-600 data-[state=active]:border-blue-600',
+          'border-b-2 border-transparent hover:text-gray-700 hover:border-gray-300 data-[state=active]:text-black data-[state=active]:border-black',
         underline:
-          'border-b-2 border-transparent hover:text-gray-700 hover:border-gray-300 data-[state=active]:text-blue-600 data-[state=active]:border-blue-600',
+          'border-b-2 border-transparent hover:text-gray-700 hover:border-gray-300 data-[state=active]:text-black data-[state=active]:border-black',
         pills:
           'rounded-md hover:bg-white/50 data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm',
       },
       size: {
-        sm: 'px-3 py-1.5 text-xs',
-        md: 'px-4 py-2 text-sm',
-        lg: 'px-6 py-3 text-base',
+        sm: 'px-2 py-1.5 text-xs md:px-3',
+        md: 'px-3 py-2 text-sm md:px-4',
+        lg: 'px-4 py-3 text-sm md:px-6 md:text-base',
       },
       iconPosition: {
-        left: 'flex-row gap-2',
-        right: 'flex-row-reverse gap-2',
+        left: 'flex-row gap-1 md:gap-2',
+        right: 'flex-row-reverse gap-1 md:gap-2',
         top: 'flex-col gap-1',
         bottom: 'flex-col-reverse gap-1',
       },
@@ -78,9 +78,9 @@ const tabContentVariants = cva(
   {
     variants: {
       size: {
-        sm: 'mt-2',
-        md: 'mt-4',
-        lg: 'mt-6',
+        sm: 'mt-2 md:mt-3',
+        md: 'mt-3 md:mt-4',
+        lg: 'mt-4 md:mt-6',
       },
     },
     defaultVariants: {
@@ -96,6 +96,8 @@ export interface TabItem {
   label: string;
   /** Optional icon component */
   icon?: React.ComponentType<{ className?: string }> | undefined;
+  /** Optional icon to render when the tab is active */
+  activeStateIcon?: React.ComponentType<{ className?: string }> | undefined;
   /** Whether the tab is disabled */
   disabled?: boolean;
   /** Tab content */
@@ -120,6 +122,10 @@ export interface TabsProps
   ariaLabel?: string;
   /** Position of the icon relative to the label */
   iconPosition?: 'left' | 'right' | 'top' | 'bottom';
+  /** Enable URL parameter persistence */
+  persistInUrl?: boolean;
+  /** URL parameter name for tab persistence (default: 'tab') */
+  urlParamName?: string;
 }
 
 /**
@@ -150,6 +156,8 @@ export interface TabsProps
  *   defaultActiveTab="general"
  *   variant="underline"
  *   size="md"
+ *   persistInUrl={true}
+ *   urlParamName="tab"
  * />
  * ```
  */
@@ -164,11 +172,39 @@ export const Tabs: React.FC<TabsProps> = ({
   disabled = false,
   ariaLabel = 'Navigation tabs',
   iconPosition = 'left',
+  persistInUrl = false,
+  urlParamName = 'tab',
   ...props
 }) => {
-  const [internalActiveTab, setInternalActiveTab] = useState(
-    activeTab || defaultActiveTab || items[0]?.id || ''
-  );
+  // URL parameter management
+  const getUrlParams = () => {
+    if (typeof window === 'undefined') return new URLSearchParams();
+    return new URLSearchParams(window.location.search);
+  };
+
+  const updateUrlParams = (newTab: string) => {
+    if (typeof window === 'undefined') return;
+
+    const searchParams = getUrlParams();
+    searchParams.set(urlParamName, newTab);
+
+    const newUrl = `${window.location.pathname}?${searchParams.toString()}`;
+    window.history.replaceState({}, '', newUrl);
+  };
+
+  // Get initial active tab from URL if persistence is enabled
+  const getInitialActiveTab = () => {
+    if (persistInUrl && typeof window !== 'undefined') {
+      const urlTab = getUrlParams().get(urlParamName);
+      if (urlTab && items.some(item => item.id === urlTab)) {
+        return urlTab;
+      }
+    }
+    return activeTab || defaultActiveTab || items[0]?.id || '';
+  };
+
+  const [internalActiveTab, setInternalActiveTab] =
+    useState(getInitialActiveTab);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const currentActiveTab = activeTab || internalActiveTab;
@@ -183,6 +219,12 @@ export const Tabs: React.FC<TabsProps> = ({
     if (disabled) return;
 
     setInternalActiveTab(tabId);
+
+    // Update URL parameters if persistence is enabled
+    if (persistInUrl) {
+      updateUrlParams(tabId);
+    }
+
     onChange?.(tabId);
   };
 
@@ -241,7 +283,8 @@ export const Tabs: React.FC<TabsProps> = ({
       >
         {items.map((item, index) => {
           const isActive = item.id === currentActiveTab;
-          const Icon = item.icon;
+          const Icon =
+            isActive && item.activeStateIcon ? item.activeStateIcon : item.icon;
 
           return (
             <button

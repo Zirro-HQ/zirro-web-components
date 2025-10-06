@@ -49,6 +49,10 @@ const meta: Meta<typeof Input> = {
       control: 'text',
       description: 'Error message displayed below input',
     },
+    combobox: {
+      control: 'boolean',
+      description: 'Enable searchable dropdown (combobox) behavior',
+    },
     disabled: {
       control: 'boolean',
       description: 'Whether the input is disabled',
@@ -519,6 +523,53 @@ export const BusinessSetupForm: Story = {
       },
     },
     layout: 'padded',
+  },
+};
+
+// Combobox stories
+export const CurrencyCombobox: Story = {
+  render: () => {
+    const [value, setValue] = useState<string | undefined>('NGN');
+    const options = [
+      {
+        label: <div>Nigerian Naira (₦)</div>,
+        value: 'NGN',
+        searchText: 'nigeria naira ngn ₦',
+      },
+      {
+        label: <div>US Dollar ($)</div>,
+        value: 'USD',
+        searchText: 'usd dollar $',
+      },
+      { label: <div>Euro (€)</div>, value: 'EUR', searchText: 'euro eur €' },
+      {
+        label: <div>British Pound (£)</div>,
+        value: 'GBP',
+        searchText: 'pound gbp £',
+      },
+    ];
+    return (
+      <div className='w-full max-w-xl space-y-2'>
+        <Input
+          label='Booking Currency'
+          combobox
+          options={options}
+          selectedValue={value}
+          onSelectOption={opt => setValue(opt.value)}
+          noBorderRadius
+          placeholder='Search currency'
+        />
+        <div className='text-sm text-gray-600'>Selected: {value}</div>
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Searchable combobox input. Type to filter options, click to select. Accessible with ARIA roles and keyboard support.',
+      },
+    },
   },
 };
 

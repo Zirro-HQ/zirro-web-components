@@ -27,6 +27,10 @@ const meta: Meta<typeof DrawerModal> = {
       control: 'text',
       description: 'Drawer title',
     },
+    header: {
+      control: false,
+      description: 'Custom header node (replaces default header when provided)',
+    },
     showCloseButton: {
       control: 'boolean',
       description: 'Whether to show close button',
@@ -170,6 +174,55 @@ export const NoTitle: Story = {
     size: 'lg',
     backdropVariant: 'blur',
     showCloseButton: true,
+    closeOnBackdropClick: true,
+    closeOnEscape: true,
+  },
+};
+
+export const WithCustomHeader: Story = {
+  render: args => {
+    const [isOpen, setIsOpen] = useState(false);
+    return (
+      <div className='p-8'>
+        <button
+          onClick={() => setIsOpen(true)}
+          className='rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700'
+        >
+          Open Drawer With Custom Header
+        </button>
+
+        <DrawerModal
+          {...args}
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+          header={
+            <div className='flex items-center justify-between'>
+              <div className='flex items-center gap-3'>
+                <div className='h-6 w-6 rounded bg-blue-600' />
+                <h2 className='text-lg font-semibold text-gray-900'>
+                  Booking Details
+                </h2>
+              </div>
+              <button className='rounded-full bg-[#DDE0FF] px-4 py-2 text-[#2C4BFF] hover:bg-[#D0D5FF]'>
+                SHARE
+              </button>
+            </div>
+          }
+        >
+          <div className='space-y-4'>
+            <p className='text-gray-700'>
+              Custom header replaces the default title/close layout.
+            </p>
+            <div className='border rounded-lg p-4'>Content area…</div>
+          </div>
+        </DrawerModal>
+      </div>
+    );
+  },
+  args: {
+    size: 'lg',
+    backdropVariant: 'blur',
+    showCloseButton: false,
     closeOnBackdropClick: true,
     closeOnEscape: true,
   },
