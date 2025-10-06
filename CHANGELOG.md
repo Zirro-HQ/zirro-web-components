@@ -1,3 +1,9 @@
+## 1.5.0 (2025-10-06)
+
+* Merge branch 'main' of github.com:Zirro-HQ/zirro-web-components into tega/feat/booking-components ([01a5936](https://github.com/Zirro-HQ/zirro-web-components/commit/01a5936))
+* Merge pull request #13 from Zirro-HQ/tega/feat/booking-components ([80d6a88](https://github.com/Zirro-HQ/zirro-web-components/commit/80d6a88)), closes [#13](https://github.com/Zirro-HQ/zirro-web-components/issues/13)
+* feat: tab component ([45fe4ea](https://github.com/Zirro-HQ/zirro-web-components/commit/45fe4ea))
+
 ## 1.4.0 (2025-10-04)
 
 * Merge branch 'main' of github.com:Zirro-HQ/zirro-web-components into tega/feat/booking-components ([3e5ae81](https://github.com/Zirro-HQ/zirro-web-components/commit/3e5ae81))
