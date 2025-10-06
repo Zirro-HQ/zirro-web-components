@@ -10,6 +10,7 @@ const textVariants = cva('font-jost', {
       small: 'text-sm', // 0.875rem
       medium: 'text-base', // 1rem
       large: 'text-xl', // 1.25rem
+      xlarge: 'text-2xl', // 1.5rem
     },
     weight: {
       normal: 'font-normal', // 400

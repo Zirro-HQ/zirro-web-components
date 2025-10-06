@@ -36,6 +36,10 @@ const buttonVariants = cva(
 
         // Disabled state (NEXT disabled)
         disabled: 'bg-gray-200 text-gray-400 cursor-not-allowed',
+
+        // Soft blue pill used for actions like SHARE (per design)
+        share:
+          'bg-[#DDE0FF] text-[#2C4BFF] hover:bg-[#D0D5FF] focus:ring-[#2C4BFF]/40',
       },
       size: {
         sm: 'h-9 px-4 text-sm',

@@ -391,3 +391,147 @@ export const Controlled: Story = {
     size: 'md',
   },
 };
+
+export const UrlPersistence: Story = {
+  render: () => (
+    <div className='space-y-6'>
+      <div className='p-4 bg-blue-50 border border-blue-200 rounded-lg'>
+        <h3 className='text-lg font-semibold mb-2'>URL Persistence Demo</h3>
+        <p className='text-sm text-gray-600 mb-4'>
+          This tab component persists the active tab in the URL. Try switching
+          tabs and refreshing the page - the selected tab will be maintained.
+          The URL will show `?tab=design` or `?tab=features` etc.
+        </p>
+        <p className='text-xs text-gray-500'>
+          Note: URL changes are visible in the browser's address bar when
+          viewing this story in isolation.
+        </p>
+      </div>
+
+      <Tabs
+        items={settingsTabs}
+        variant='underline'
+        size='lg'
+        persistInUrl={true}
+        urlParamName='tab'
+        defaultActiveTab='general'
+      />
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Demonstrates URL parameter persistence. The active tab is saved to the URL and persists across page reloads.',
+      },
+    },
+  },
+};
+
+export const MobileResponsive: Story = {
+  render: () => (
+    <div className='space-y-8'>
+      <div className='p-4 bg-orange-50 border border-orange-200 rounded-lg'>
+        <h3 className='text-lg font-semibold mb-2'>Mobile Responsive Demo</h3>
+        <p className='text-sm text-gray-600 mb-4'>
+          Resize your browser or view on mobile to see responsive behavior:
+        </p>
+        <ul className='text-xs text-gray-500 space-y-1 mb-4'>
+          <li>• Horizontal scrolling on mobile when tabs don't fit</li>
+          <li>• Smaller padding and gaps on mobile</li>
+          <li>• Icons and text scale appropriately</li>
+          <li>• Hidden scrollbars for clean appearance</li>
+        </ul>
+      </div>
+
+      <div className='space-y-6'>
+        <div>
+          <h4 className='text-md font-semibold mb-3'>
+            Many Tabs (Horizontal Scroll)
+          </h4>
+          <Tabs
+            items={[
+              {
+                id: 'tab1',
+                label: 'Dashboard',
+                content: <div className='p-4'>Dashboard content</div>,
+              },
+              {
+                id: 'tab2',
+                label: 'Analytics',
+                content: <div className='p-4'>Analytics content</div>,
+              },
+              {
+                id: 'tab3',
+                label: 'Reports',
+                content: <div className='p-4'>Reports content</div>,
+              },
+              {
+                id: 'tab4',
+                label: 'Settings',
+                content: <div className='p-4'>Settings content</div>,
+              },
+              {
+                id: 'tab5',
+                label: 'Users',
+                content: <div className='p-4'>Users content</div>,
+              },
+              {
+                id: 'tab6',
+                label: 'Billing',
+                content: <div className='p-4'>Billing content</div>,
+              },
+              {
+                id: 'tab7',
+                label: 'Support',
+                content: <div className='p-4'>Support content</div>,
+              },
+              {
+                id: 'tab8',
+                label: 'Integrations',
+                content: <div className='p-4'>Integrations content</div>,
+              },
+            ]}
+            variant='underline'
+            size='md'
+            defaultActiveTab='tab1'
+          />
+        </div>
+
+        <div>
+          <h4 className='text-md font-semibold mb-3'>
+            Pills Variant (Mobile Responsive)
+          </h4>
+          <Tabs
+            items={settingsTabs}
+            variant='pills'
+            size='sm'
+            defaultActiveTab='general'
+          />
+        </div>
+
+        <div>
+          <h4 className='text-md font-semibold mb-3'>Large Size with Icons</h4>
+          <Tabs
+            items={settingsTabs}
+            variant='underline'
+            size='lg'
+            iconPosition='top'
+            defaultActiveTab='general'
+          />
+        </div>
+      </div>
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Demonstrates mobile responsive behavior with horizontal scrolling, smaller spacing, and adaptive sizing.',
+      },
+    },
+    viewport: {
+      defaultViewport: 'mobile1',
+    },
+  },
+};

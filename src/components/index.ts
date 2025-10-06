@@ -10,6 +10,7 @@ export * from './Badge';
 export * from './Copy';
 export * from './DrawerModal';
 export * from './Tabs';
+export * from './ColorPicker';
 
 export { cn } from '@/utils/cn';
 export type * from '@/types';
